@@ -1,3 +1,18 @@
+var tabEvent = document.createEvent('KeyboardEvent');
+// Chromium Hack
+Object.defineProperty(tabEvent, 'keyCode', {
+    get : function() {
+        return this.keyCodeVal;
+    }
+});     
+Object.defineProperty(tabEvent, 'which', {
+    get : function() {
+        return this.keyCodeVal;
+    }
+});
+tabEvent.initKeyboardEvent('keydown', true, true, null, false, false, false, false, 9, 9);
+tabEvent.keyCodeVal = 9;
+
 describe("tabIndent", function() {
 	// var player;
 	// var song;
@@ -50,5 +65,43 @@ describe("tabIndent", function() {
 			tabIndent.removeAll();
 			expect(document.getElementsByClassName('tabIndent-rendered').length).toEqual(0);
 		})
+	});
+
+	describe("tab functionality", function() {
+		it('should insert a tab at the current cursor (no selection) and replace the cursor at the expected position', function() {
+			var el = document.getElementById('foobar');
+			tabIndent.render(el);
+			el.value = 'abc';
+			el.selectionStart = 1;
+			el.selectionEnd = 1;
+			el.dispatchEvent(tabEvent);
+			expect(el.value).toEqual("a\tbc");
+			expect(el.selectionStart).toEqual(2);
+			expect(el.selectionEnd).toEqual(2);
+		});
+
+		it('should insert a tab at the current cursor start (when a single line of text is highlighted) and maintain highlighted text', function() {
+			var el = document.getElementById('foobar');
+			tabIndent.render(el);
+			el.value = 'abc';
+			el.selectionStart = 1;
+			el.selectionEnd = 3;
+			el.dispatchEvent(tabEvent);
+			expect(el.value).toEqual("a\tbc");
+			expect(el.selectionStart).toEqual(2);
+			expect(el.selectionEnd).toEqual(4);
+		});
+
+		it('should indent the entire block if the selection is multi-line', function() {
+			var el = document.getElementById('foobar');
+			tabIndent.render(el);
+			el.value = "ab\ncd";
+			el.selectionStart = 0;
+			el.selectionEnd = 5;
+			el.dispatchEvent(tabEvent);
+			expect(el.value).toEqual("\tab\n\tcd");
+			expect(el.selectionStart).toEqual(1);
+			expect(el.selectionEnd).toEqual(7);
+		});
 	});
 });
