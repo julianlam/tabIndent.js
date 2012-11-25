@@ -54,16 +54,53 @@ tabIndent = {
 		keydown: function(e) {
 			if (e.keyCode === 9) {
 				e.preventDefault();
-				if (this.selectionEnd >= this.selectionStart) {
+				var	currentStart = this.selectionStart,
+					currentEnd = this.selectionEnd;
+				if ((currentEnd-currentStart) == 0 || !this.value.substring(currentStart, currentEnd).match(/\n/)) {
 					// Add tab before selection, maintain highlighted text selection
-					var	currentStart = this.selectionStart,
-						currentEnd = this.selectionEnd;
-
 					this.value = this.value.slice(0, currentStart) + "\t" + this.value.slice(currentStart);
 					this.selectionStart = currentStart + 1;
 					this.selectionEnd = currentEnd + 1;
 				} else {
-					console.log('How are you selecting negative characters?');
+					console.log('multiline');
+					// Given the current selection, find the start index of each line
+					var	text = this.value,
+						startIndices = [],
+						offset = 0;
+
+					console.log(text.match(/\n/));
+
+					while(text.match(/\n/) && text.match(/\n/).length > 0) {
+						offset = (startIndices.length > 0 ? startIndices[startIndices.length - 1] : 0);
+						var lineEnd = text.search("\n");
+						console.log(lineEnd);
+						startIndices.push(lineEnd + offset + 1);
+						text = text.substring(lineEnd + 1);
+					}
+					startIndices.unshift(0);
+
+					// Iterating through the startIndices, if the index falls within selectionStart and selectionEnd, indent it there.
+					console.log(startIndices, currentStart, currentEnd);
+					var	l = startIndices.length,
+						newStart = undefined,
+						newEnd = undefined;
+
+					while(l--) {
+						var lowerBound = startIndices[l];
+						if (startIndices[l+1]) lowerBound = startIndices[l+1];
+
+						if (lowerBound >= currentStart && startIndices[l] <= currentEnd) {
+							console.log('indenting', startIndices[l]);
+							this.value = this.value.slice(0, startIndices[l]) + "\t" + this.value.slice(startIndices[l]);
+
+							newStart = startIndices[l];
+							if (!newEnd) newEnd = (startIndices[l+1] ? startIndices[l+1] + 1 : 'end');
+						}
+					}
+
+					this.selectionStart = newStart;
+					this.selectionEnd = (newEnd !== 'end' ? newEnd : this.value.length);
+					console.log(newStart, newEnd);
 				}
 			}
 		}

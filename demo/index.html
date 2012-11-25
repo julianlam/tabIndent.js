@@ -2,12 +2,31 @@
 <head>
 	<title>tabIndent Demo</title>
 	<script src="../js/tabIndent.js"></script>
+	<style type="text/css">
+		textarea {
+			width: 50%;
+			margin: 0 auto;
+			border: 1px solid #aaa;
+			padding: 12px;
+			font-family: consolas, monospace;
+			height: 200px;
+		}
+	</style>
 </head>
 <body>
-	<textarea class="tabIndent" id="foobar"></textarea>
+	<h1>tabIndent.js Demo</h1>
+	<p>
+		Indent the code in this textbox!
+	</p>
+	<textarea class="tabIndent" id="foobar">&lt;script&gt;
+	console.log('hello world!');
+	var lipsum = 'lorem ipsum';
+	setTimeout(function() {
+		alert(lipsum);
+	});
+&lt;/script&gt;</textarea>
 	<script>
-		// var el = document.getElementById('foobar');
-		// tabIndent.render(el);
+		tabIndent.renderAll();
 	</script>
 </body>
 </html>
