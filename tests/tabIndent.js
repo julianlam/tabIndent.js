@@ -10,16 +10,49 @@ Object.defineProperty(tabEvent, 'which', {
         return this.keyCodeVal;
     }
 });
-tabEvent.initKeyboardEvent('keydown', true, true, null, false, false, false, false, 9, 9);
+if (tabEvent.initKeyboardEvent) tabEvent.initKeyboardEvent('keydown', true, true, null, false, false, false, false, 9, 9);
+else tabEvent.initKeyEvent('keydown', true, true, null, false, false, false, false, 9, 9);
 tabEvent.keyCodeVal = 9;
 
-describe("tabIndent", function() {
-	// var player;
-	// var song;
+var shiftTabEvent = document.createEvent('KeyboardEvent');
+// Chromium Hack
+Object.defineProperty(shiftTabEvent, 'keyCode', {
+    get : function() {
+        return this.keyCodeVal;
+    }
+});     
+Object.defineProperty(shiftTabEvent, 'which', {
+    get : function() {
+        return this.keyCodeVal;
+    }
+});
+if (shiftTabEvent.initKeyboardEvent) shiftTabEvent.initKeyboardEvent('keydown', true, true, null, false, false, true, false, 9, 9);
+else shiftTabEvent.initKeyEvent('keydown', true, true, null, false, false, true, false, 9, 9);
+shiftTabEvent.keyCodeVal = 9;
 
+describe("tabIndent", function() {
 	beforeEach(function() {
 		document.getElementById('env').innerHTML =
 			'<textarea class="tabIndent"></textarea><textarea id="foobar"></textarea><div id="lorem"></div>';
+	});
+
+	describe("isMultiLine()", function() {
+		it('should be able to detect when a selection is multiline', function() {
+			var el = document.getElementById('foobar');
+			tabIndent.render(el);
+			el.value = 'ab\ncd';
+			el.selectionStart = 1;
+			el.selectionEnd = 4;
+			expect(tabIndent.isMultiLine(el)).toBe(true);
+		});
+		it('should be able to detect when a selection is NOT multiline', function() {
+			var el = document.getElementById('foobar');
+			tabIndent.render(el);
+			el.value = 'abcd';
+			el.selectionStart = 1;
+			el.selectionEnd = 4;
+			expect(tabIndent.isMultiLine(el)).toBe(false);
+		});
 	});
 
 	describe("render", function() {
@@ -102,6 +135,32 @@ describe("tabIndent", function() {
 			expect(el.value).toEqual("\tab\n\tcd");
 			expect(el.selectionStart).toEqual(0);
 			expect(el.selectionEnd).toEqual(7);
+		});
+	});
+
+	describe("shift-tab functionality", function() {
+		it('should remove a tab character if it is in front of one', function() {
+			var el = document.getElementById('foobar');
+			tabIndent.render(el);
+			el.value = "ab\tcd";
+			el.selectionStart = 3;
+			el.selectionEnd = 3;
+			el.dispatchEvent(shiftTabEvent);
+			expect(el.value).toEqual("abcd");
+			expect(el.selectionStart).toEqual(2);
+			expect(el.selectionEnd).toEqual(2);
+		});
+
+		it('should remove a tab character at the beginning of each line, if selection is multiline', function() {
+			var el = document.getElementById('foobar');
+			tabIndent.render(el);
+			el.value = "\tab\n\tcd";
+			el.selectionStart = 2;
+			el.selectionEnd = 6;
+			el.dispatchEvent(shiftTabEvent);
+			expect(el.value).toEqual("ab\ncd");
+			expect(el.selectionStart).toEqual(0);
+			expect(el.selectionEnd).toEqual(5);
 		});
 	});
 });
