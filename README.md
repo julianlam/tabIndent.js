@@ -21,7 +21,7 @@ To use, add the line of javascript to your `head` element:
 
 Invoke thusly:
 
-    tabIndent.render();
+    tabIndent.renderAll();
 
 To invoke on one specific textarea:
 
