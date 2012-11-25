@@ -100,7 +100,7 @@ describe("tabIndent", function() {
 			el.selectionEnd = 5;
 			el.dispatchEvent(tabEvent);
 			expect(el.value).toEqual("\tab\n\tcd");
-			expect(el.selectionStart).toEqual(1);
+			expect(el.selectionStart).toEqual(0);
 			expect(el.selectionEnd).toEqual(7);
 		});
 	});
