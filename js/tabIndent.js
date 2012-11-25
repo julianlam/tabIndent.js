@@ -62,13 +62,10 @@ tabIndent = {
 					this.selectionStart = currentStart + 1;
 					this.selectionEnd = currentEnd + 1;
 				} else {
-					console.log('multiline');
 					// Given the current selection, find the start index of each line
 					var	text = this.value,
 						startIndices = [],
 						offset = 0;
-
-					console.log(text.match(/\n/));
 
 					while(text.match(/\n/) && text.match(/\n/).length > 0) {
 						offset = (startIndices.length > 0 ? startIndices[startIndices.length - 1] : 0);
@@ -80,7 +77,6 @@ tabIndent = {
 					startIndices.unshift(0);
 
 					// Iterating through the startIndices, if the index falls within selectionStart and selectionEnd, indent it there.
-					console.log(startIndices, currentStart, currentEnd);
 					var	l = startIndices.length,
 						newStart = undefined,
 						newEnd = undefined;

@@ -39,3 +39,7 @@ To remove an instance of tabIndent:
 
 For styling purposes, after a textarea is enhanced by tabIndent, it will have
 the class `tabIndent-rendered`.
+
+## Known Bugs
+
+Please consult [the project buglist](https://github.com/julianlam/tabIndent.js/issues).
