@@ -73,7 +73,7 @@ tabIndent = {
 
 						while(l--) {
 							var lowerBound = startIndices[l];
-							if (startIndices[l+1]) lowerBound = startIndices[l+1];
+							if (startIndices[l+1] && currentStart != startIndices[l+1]) lowerBound = startIndices[l+1];
 
 							if (lowerBound >= currentStart && startIndices[l] <= currentEnd) {
 								this.value = this.value.slice(0, startIndices[l]) + "\t" + this.value.slice(startIndices[l]);
@@ -106,7 +106,7 @@ tabIndent = {
 
 						while(l--) {
 							var lowerBound = startIndices[l];
-							if (startIndices[l+1]) lowerBound = startIndices[l+1];
+							if (startIndices[l+1] && currentStart != startIndices[l+1]) lowerBound = startIndices[l+1];
 
 							if (lowerBound >= currentStart && startIndices[l] <= currentEnd) {
 								if (this.value.substr(startIndices[l], 1) == '\t') {
