@@ -70,7 +70,7 @@ tabIndent = {
 							l = startIndices.length,
 							newStart = undefined,
 							newEnd = undefined,
-							selectedRows = 0;
+							affectedRows = 0;
 
 						while(l--) {
 							var lowerBound = startIndices[l];
@@ -81,12 +81,12 @@ tabIndent = {
 
 								newStart = startIndices[l];
 								if (!newEnd) newEnd = (startIndices[l+1] ? startIndices[l+1] - 1 : 'end');
-								selectedRows++;
+								affectedRows++;
 							}
 						}
 
 						this.selectionStart = newStart;
-						this.selectionEnd = (newEnd !== 'end' ? newEnd + selectedRows : this.value.length);
+						this.selectionEnd = (newEnd !== 'end' ? newEnd + affectedRows : this.value.length);
 					}
 				} else {
 					// Shift-Tab Behaviour
@@ -103,7 +103,7 @@ tabIndent = {
 							l = startIndices.length,
 							newStart = undefined,
 							newEnd = undefined,
-							selectedRows = 0;
+							affectedRows = 0;
 
 						while(l--) {
 							var lowerBound = startIndices[l];
@@ -113,16 +113,16 @@ tabIndent = {
 								if (this.value.substr(startIndices[l], 1) == '\t') {
 									// Remove a tab
 									this.value = this.value.slice(0, startIndices[l]) + this.value.slice(startIndices[l] + 1);
+									affectedRows++;
 								} else {}	// Do nothing
 
 								newStart = startIndices[l];
 								if (!newEnd) newEnd = (startIndices[l+1] ? startIndices[l+1] - 1 : 'end');
-								selectedRows++;
 							}
 						}
 
 						this.selectionStart = newStart;
-						this.selectionEnd = (newEnd !== 'end' ? newEnd - selectedRows : this.value.length);
+						this.selectionEnd = (newEnd !== 'end' ? newEnd - affectedRows : this.value.length);
 					}
 				}
 			}
