@@ -1,0 +1,84 @@
+<html>
+<head>
+	<title>tabIndent.js Demo</title>
+	<script src="js/tabIndent.js"></script>
+	<script src="http://use.edgefonts.net/source-sans-pro.js"></script>
+	<style type="text/css">
+		body {
+			font-family: source-sans-pro, serif;
+			margin: 0;
+		}
+
+		h1 {
+			text-align: center;
+			margin-top: 1em;
+		}
+
+		p {
+			text-align: center;
+			max-width: 70%;
+			margin: 1em auto;
+		}
+
+		menu {
+			width: 100%;
+			text-align: center;
+			background: #ccc;
+			border-top: 1px solid #aaa;
+			border-bottom: 1px solid #aaa;
+			padding: 0.5em 0;
+		}
+
+		menu li {
+			display: inline-block;
+			*display: inline;
+			zoom: 1;
+			list-style-type: none;
+			margin-right: 1.5em;
+		}
+
+		menu li:last-child {
+			margin-right: 0;
+		}
+
+		textarea {
+			width: 50%;
+			margin: 0 auto;
+			border: 2px solid #666;
+			padding: 12px;
+			font-family: consolas, monospace;
+			height: 200px;
+			overflow: auto;
+			display: block;
+			background: #333;
+			color: #ccc;
+			resize: none;
+		}
+	</style>
+</head>
+<body>
+	<h1>tabIndent.js</h1>
+	<menu>
+		<li><a href=""><strong>Demo</strong></a></li>
+		<li><a href="https://github.com/julianlam/tabIndent.js">Project Page</a></li>
+		<li><a href="https://github.com/julianlam/tabIndent.js/issues">Bugs</a></li>
+	</menu>
+	<p>
+		The following textarea has been enhanced with <a href="https://github.com/julianlam/tabIndent.js"><strong>tabIndent.js</strong></a>,
+		so that the tab key no longer takes you to the next input, but rather, acts like a text editor by inserting a tab character.
+	</p>
+	<p>
+		Multi-line highlighted text is also tab-able, and shift-tab removed a tab character instead.
+	</p>
+	<textarea class="tabIndent" id="foobar">&lt;script&gt;
+	console.log('lorem ipsum');
+	var greetings = 'hello world!';
+	setTimeout(function() {
+		alert(greetings);
+	}, 500);
+&lt;/script&gt;</textarea>
+	<script>
+		tabIndent.renderAll();
+	</script>
+</body>
+</html>
