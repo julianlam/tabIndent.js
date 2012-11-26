@@ -139,7 +139,7 @@ describe("tabIndent", function() {
 	});
 
 	describe("shift-tab functionality", function() {
-		it('should remove a tab character if it is in front of one', function() {
+		it('should remove a tab character if it is in front of one (no highlight)', function() {
 			var el = document.getElementById('foobar');
 			tabIndent.render(el);
 			el.value = "ab\tcd";
@@ -149,6 +149,18 @@ describe("tabIndent", function() {
 			expect(el.value).toEqual("abcd");
 			expect(el.selectionStart).toEqual(2);
 			expect(el.selectionEnd).toEqual(2);
+		});
+
+		it('should remove a tab character if it is in front of one (with single-line highlighted text)', function() {
+			var el = document.getElementById('foobar');
+			tabIndent.render(el);
+			el.value = "ab\tcd";
+			el.selectionStart = 3;
+			el.selectionEnd = 5;
+			el.dispatchEvent(shiftTabEvent);
+			expect(el.value).toEqual("abcd");
+			expect(el.selectionStart).toEqual(2);
+			expect(el.selectionEnd).toEqual(4);
 		});
 
 		it('should remove a tab character at the beginning of each line, if selection is multiline', function() {
