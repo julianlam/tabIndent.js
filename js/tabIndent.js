@@ -50,7 +50,7 @@ if (!Element.prototype.addEventListener) {
 }
 
 tabIndent = {
-	version: '0.1',
+	version: '0.1.5',
 	events: {
 		keydown: function(e) {
 			if (e.keyCode === 9) {
