@@ -95,7 +95,7 @@ tabIndent = {
 						if (this.value.substr(currentStart - 1, 1) == "\t") {
 							this.value = this.value.substr(0, currentStart - 1) + this.value.substr(currentStart);
 							this.selectionStart = currentStart - 1;
-							this.selectionEnd = currentStart - 1;
+							this.selectionEnd = currentEnd - 1;
 						}
 					} else {
 						// Iterating through the startIndices, if the index falls within selectionStart and selectionEnd, remove an indent from that row
