@@ -143,26 +143,41 @@ tabIndent = {
 			// Temporarily suspend the main tabIndent event
 			tabIndent.remove(e.target);
 
-			// ... but re-add it upon blur
-			e.target.addEventListener('focus', function f() {
-				tabIndent.render(e.target);
-				e.target.removeEventListener('focus', f);
-			}, false);
+			// ... but re-add it upon re-focus
+			tabIndent.render(e.target);
 		}
 	},
 	render: function(el) {
+		var self = this;
+
 		if (el.nodeName === 'TEXTAREA') {
-			var classes = (el.getAttribute('class') || '').split(' '),
-			contains = classes.indexOf('tabIndent');
+			el.addEventListener('focus', function f() {
+				var delayedRefocus = setTimeout(function() {
+					var classes = (el.getAttribute('class') || '').split(' '),
+					contains = classes.indexOf('tabIndent');
 
-			el.addEventListener('keydown', this.events.keydown);
-			el.style.backgroundImage = "url('" + this.config.images + "active.png')";
-			el.style.backgroundPosition = 'top right';
-			el.style.backgroundRepeat = 'no-repeat';
+					el.addEventListener('keydown', self.events.keydown);
+					el.style.backgroundImage = "url('" + self.config.images + "active.png')";
+					el.style.backgroundPosition = 'top right';
+					el.style.backgroundRepeat = 'no-repeat';
 
-			if (contains !== -1) classes.splice(contains, 1);
-			classes.push('tabIndent-rendered');
-			el.setAttribute('class', classes.join(' '));
+					if (contains !== -1) classes.splice(contains, 1);
+					classes.push('tabIndent-rendered');
+					el.setAttribute('class', classes.join(' '));
+
+					el.removeEventListener('focus', f);
+				}, 500);
+
+				// If they were just tabbing through the input, let them continue unimpeded
+				el.addEventListener('blur', function b() {
+					clearTimeout(delayedRefocus);
+					el.removeEventListener('blur', b);
+				});
+			});
+
+			el.addEventListener('blur', function b(e) {
+				self.events.disable(e);
+			});
 		}
 	},
 	renderAll: function() {
