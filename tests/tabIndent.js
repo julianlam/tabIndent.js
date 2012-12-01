@@ -33,7 +33,10 @@ shiftTabEvent.keyCodeVal = 9;
 describe("tabIndent", function() {
 	beforeEach(function() {
 		document.getElementById('env').innerHTML =
-			'<textarea class="tabIndent"></textarea><textarea id="foobar"></textarea><div id="lorem"></div>';
+			'<textarea class="tabIndent"></textarea>' +
+			'<textarea id="foobar"></textarea>' +
+			'<div id="lorem"></div>' +
+			'<div id="ipsum" contenteditable></div>';
 	});
 
 	describe("isMultiLine()", function() {
@@ -70,6 +73,18 @@ describe("tabIndent", function() {
 			tabIndent.render(document.getElementById('foobar'));
 			expect(document.getElementsByClassName('tabIndent-rendered').length).toEqual(1);
 		})
+
+		it("should render divs with the \"contenteditable\" property", function() {
+			tabIndent.render(document.getElementById('ipsum'));
+			expect(document.getElementsByClassName('tabIndent-rendered').length).toEqual(1);
+		});
+
+		it("should NOT render a divs with the \"contenteditable\" property when it's value is 'false'", function() {
+			var ipsum = document.getElementById('ipsum');
+			ipsum.setAttribute('contenteditable', 'false');
+			tabIndent.render(ipsum);
+			expect(document.getElementsByClassName('tabIndent-rendered').length).toEqual(0);
+		});
 	});
 
 	describe("renderAll", function() {

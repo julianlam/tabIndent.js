@@ -53,6 +53,8 @@ tabIndent = {
 	version: '0.1.5',
 	events: {
 		keydown: function(e) {
+			var modAttr = tabIndent.getModAttr(e);
+
 			if (e.keyCode === 9) {
 				e.preventDefault();
 				var	currentStart = this.selectionStart,
@@ -61,7 +63,7 @@ tabIndent = {
 					// Normal Tab Behaviour
 					if (!tabIndent.isMultiLine(this)) {
 						// Add tab before selection, maintain highlighted text selection
-						this.value = this.value.slice(0, currentStart) + "\t" + this.value.slice(currentStart);
+						this[modAttr] = this[modAttr].slice(0, currentStart) + "\t" + this[modAttr].slice(currentStart);
 						this.selectionStart = currentStart + 1;
 						this.selectionEnd = currentEnd + 1;
 					} else {
@@ -77,7 +79,7 @@ tabIndent = {
 							if (startIndices[l+1] && currentStart != startIndices[l+1]) lowerBound = startIndices[l+1];
 
 							if (lowerBound >= currentStart && startIndices[l] <= currentEnd) {
-								this.value = this.value.slice(0, startIndices[l]) + "\t" + this.value.slice(startIndices[l]);
+								this[modAttr] = this[modAttr].slice(0, startIndices[l]) + "\t" + this[modAttr].slice(startIndices[l]);
 
 								newStart = startIndices[l];
 								if (!newEnd) newEnd = (startIndices[l+1] ? startIndices[l+1] - 1 : 'end');
@@ -86,7 +88,7 @@ tabIndent = {
 						}
 
 						this.selectionStart = newStart;
-						this.selectionEnd = (newEnd !== 'end' ? newEnd + affectedRows : this.value.length);
+						this.selectionEnd = (newEnd !== 'end' ? newEnd + affectedRows : this[modAttr].length);
 					}
 				} else {
 					// Shift-Tab Behaviour
@@ -129,7 +131,9 @@ tabIndent = {
 		}
 	},
 	render: function(el) {
-		if (el.nodeName === 'TEXTAREA') {
+		if (	el.nodeName === 'TEXTAREA' ||
+				(el.nodeName === 'DIV' && el.hasAttribute('contenteditable') && el.getAttribute('contenteditable') !== 'false')
+		) {
 			var classes = (el.getAttribute('class') || '').split(' '),
 			contains = classes.indexOf('tabIndent');
 
@@ -143,7 +147,9 @@ tabIndent = {
 	renderAll: function() {
 		// Find all elements with the tabIndent class
 		var textareas = document.getElementsByTagName('textarea'),
+			divs = document.getElementsByTagName('div'),
 			t = textareas.length,
+			d = divs.length,
 			contains = -1,
 			classes = [],
 			el = undefined;
@@ -154,6 +160,19 @@ tabIndent = {
 
 			if (contains !== -1) {
 				el = textareas[t];
+				this.render(el);
+			}
+			contains = -1;
+			classes = [];
+			el = undefined;
+		}
+
+		while(d--) {
+			classes = (divs[d].getAttribute('class') || '').split(' ');
+			contains = classes.indexOf('tabIndent');
+
+			if (contains !== -1) {
+				el = divs[d];
 				this.render(el);
 			}
 			contains = -1;
@@ -196,7 +215,8 @@ tabIndent = {
 	},
 	isMultiLine: function(el) {
 		// Extract the selection
-		var	snippet = el.value.slice(el.selectionStart, el.selectionEnd),
+		var	modAttr = tabIndent.getModAttr(el),
+			snippet = el[modAttr].slice(el.selectionStart, el.selectionEnd),
 			nlRegex = new RegExp(/\n/);
 
 		if (nlRegex.test(snippet)) return true;
@@ -216,5 +236,12 @@ tabIndent = {
 		startIndices.unshift(0);
 
 		return startIndices;
+	},
+	getModAttr: function(obj) {
+		var modAttr = 'value'; // Default
+		if (!obj.target) modAttr = (obj.nodeName === 'TEXTAREA' ? 'value' : 'innerHTML'); 	// Probably an element?
+		else modAttr = (obj.target.nodeName === 'TEXTAREA' ? 'value' : 'innerHTML');
+
+		return modAttr;
 	}
 }
