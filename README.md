@@ -10,6 +10,17 @@ tabIndent.js
 behaviour similar to that found in editors. (Inserting a tab character,
 intentation)
 
+## Installation
+
+The repository contains four folders. Of those, only the `/js` folder is
+required. The `/images` folder contains one icon which is displayed at the
+top-right of every textarea that it is modifying.
+
+If the icon is not being displayed, please ensure that the `images` property
+in the `config` object correctly points to the folder containing the image. Its
+default setting assumes that the `/images` folder is one directory above the
+folder containing the script.
+
 ## Usage
 
 Upon invocation, tabIndent finds all `textarea` elements with the
@@ -23,12 +34,12 @@ Invoke thusly:
 
     tabIndent.renderAll();
 
-To invoke on one specific textarea:
+On the other hand, to invoke on one specific textarea:
 
     var el = document.getELementById('#targetTextArea');
     tabIndent.render(el);
 
-To remove an instance of tabIndent:
+Likewise, to remove an instance of tabIndent:
 
     var el = document.getElementById('#textareaWithTabIndent');
     tabIndent.remove(el);
@@ -40,6 +51,23 @@ To remove an instance of tabIndent:
 For styling purposes, after a textarea is enhanced by tabIndent, it will have
 the class `tabIndent-rendered`.
 
+## Caveat
+
+**tabIndent.js** willingly breaks the default action of the `tab` button, whose
+normal behaviour would bring you to the next element in the tab index (likewise,
+`shift-tab` would bring you to the previous one). To bring back the regular
+behaviour, *escape* out of the textarea by hitting the `esc` key. The textarea
+enhancements will then be temporarily disabled until you return to it at a later
+time.
+
+An icon will be present at the top right of the textarea, signifying when the
+enhancements are active.
+
 ## Known Bugs
 
 Please consult [the project buglist](https://github.com/julianlam/tabIndent.js/issues).
+
+## Attribution / Credits
+
+Use of the "active" icon courtesy of [IconShock](http://www.iconshock.com/)
+([retrieved from findicons.com](http://findicons.com/icon/499821/edit_gear?id=530587))

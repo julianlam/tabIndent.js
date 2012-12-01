@@ -51,7 +51,7 @@ if (!Element.prototype.addEventListener) {
 
 tabIndent = {
 	version: '0.1.6',
-	constants: {
+	config: {
 		images: '../images/'
 	},
 	events: {
@@ -156,7 +156,7 @@ tabIndent = {
 			contains = classes.indexOf('tabIndent');
 
 			el.addEventListener('keydown', this.events.keydown);
-			el.style.backgroundImage = "url('" + this.constants.images + "active.png')";
+			el.style.backgroundImage = "url('" + this.config.images + "active.png')";
 			el.style.backgroundPosition = 'top right';
 			el.style.backgroundRepeat = 'no-repeat';
 
