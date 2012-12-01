@@ -52,7 +52,7 @@ if (!Element.prototype.addEventListener) {
 tabIndent = {
 	version: '0.1.6',
 	constants: {
-		images: '../images/'
+		images: './images/'
 	},
 	events: {
 		keydown: function(e) {
