@@ -53,6 +53,7 @@ tabIndent = {
 	version: '0.1.5',
 	events: {
 		keydown: function(e) {
+			console.log(e.keyCode, e);
 			if (e.keyCode === 9) {
 				e.preventDefault();
 				var	currentStart = this.selectionStart,
@@ -130,7 +131,20 @@ tabIndent = {
 						this.selectionEnd = (newEnd !== 'end' ? newEnd - affectedRows : this.value.length);
 					}
 				}
+			} else if (e.keyCode == 27) {
+				tabIndent.events.disable(e);
 			}
+		},
+		disable: function(e) {
+			var events = this;
+
+			// Temporarily suspend the main tabIndent event
+			e.target.removeEventListener('keydown', events.keydown, false);
+
+			// ... but re-add it upon blur
+			e.target.addEventListener('blur', function() {
+				e.target.addEventListener('keydown', events.keydown)
+			}, false);
 		}
 	},
 	render: function(el) {
