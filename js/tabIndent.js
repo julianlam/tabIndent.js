@@ -50,7 +50,7 @@ if (!Element.prototype.addEventListener) {
 }
 
 tabIndent = {
-	version: '0.1.5',
+	version: '0.1.6',
 	events: {
 		keydown: function(e) {
 			if (e.keyCode === 9) {
@@ -76,7 +76,7 @@ tabIndent = {
 							var lowerBound = startIndices[l];
 							if (startIndices[l+1] && currentStart != startIndices[l+1]) lowerBound = startIndices[l+1];
 
-							if (lowerBound >= currentStart && startIndices[l] <= currentEnd) {
+							if (lowerBound >= currentStart && startIndices[l] < currentEnd) {
 								this.value = this.value.slice(0, startIndices[l]) + "\t" + this.value.slice(startIndices[l]);
 
 								newStart = startIndices[l];
@@ -91,10 +91,15 @@ tabIndent = {
 				} else {
 					// Shift-Tab Behaviour
 					if (!tabIndent.isMultiLine(this)) {
-						// If there's a tab before the selectionStart, remove it
 						if (this.value.substr(currentStart - 1, 1) == "\t") {
+							// If there's a tab before the selectionStart, remove it
 							this.value = this.value.substr(0, currentStart - 1) + this.value.substr(currentStart);
 							this.selectionStart = currentStart - 1;
+							this.selectionEnd = currentEnd - 1;
+						} else if (this.value.substr(currentStart - 1, 1) == "\n" && this.value.substr(currentStart, 1) == '\t') {
+							// However, if the selection is at the start of the line, and the first character is a tab, remove it
+							this.value = this.value.substring(0, currentStart) + this.value.substr(currentStart + 1);
+							this.selectionStart = currentStart;
 							this.selectionEnd = currentEnd - 1;
 						}
 					} else {
@@ -109,7 +114,7 @@ tabIndent = {
 							var lowerBound = startIndices[l];
 							if (startIndices[l+1] && currentStart != startIndices[l+1]) lowerBound = startIndices[l+1];
 
-							if (lowerBound >= currentStart && startIndices[l] <= currentEnd) {
+							if (lowerBound >= currentStart && startIndices[l] < currentEnd) {
 								if (this.value.substr(startIndices[l], 1) == '\t') {
 									// Remove a tab
 									this.value = this.value.slice(0, startIndices[l]) + this.value.slice(startIndices[l] + 1);
@@ -125,7 +130,20 @@ tabIndent = {
 						this.selectionEnd = (newEnd !== 'end' ? newEnd - affectedRows : this.value.length);
 					}
 				}
+			} else if (e.keyCode == 27) {
+				tabIndent.events.disable(e);
 			}
+		},
+		disable: function(e) {
+			var events = this;
+
+			// Temporarily suspend the main tabIndent event
+			e.target.removeEventListener('keydown', events.keydown, false);
+
+			// ... but re-add it upon blur
+			e.target.addEventListener('blur', function() {
+				e.target.addEventListener('keydown', events.keydown)
+			}, false);
 		}
 	},
 	render: function(el) {
