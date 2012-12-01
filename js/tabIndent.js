@@ -51,6 +51,9 @@ if (!Element.prototype.addEventListener) {
 
 tabIndent = {
 	version: '0.1.6',
+	constants: {
+		images: '../'
+	},
 	events: {
 		keydown: function(e) {
 			if (e.keyCode === 9) {
@@ -138,11 +141,12 @@ tabIndent = {
 			var events = this;
 
 			// Temporarily suspend the main tabIndent event
-			e.target.removeEventListener('keydown', events.keydown, false);
+			tabIndent.remove(e.target);
 
 			// ... but re-add it upon blur
-			e.target.addEventListener('blur', function() {
-				e.target.addEventListener('keydown', events.keydown)
+			e.target.addEventListener('focus', function f() {
+				tabIndent.render(e.target);
+				e.target.removeEventListener('focus', f);
 			}, false);
 		}
 	},
@@ -152,6 +156,9 @@ tabIndent = {
 			contains = classes.indexOf('tabIndent');
 
 			el.addEventListener('keydown', this.events.keydown);
+			el.style.backgroundImage = "url('" + this.constants.images + "active.png')";
+			el.style.backgroundPosition = 'top right';
+			el.style.backgroundRepeat = 'no-repeat';
 
 			if (contains !== -1) classes.splice(contains, 1);
 			classes.push('tabIndent-rendered');
@@ -185,6 +192,7 @@ tabIndent = {
 				contains = classes.indexOf('tabIndent-rendered');
 
 			el.removeEventListener('keydown', this.events.keydown);
+			el.style.backgroundImage = '';
 
 			if (contains !== -1) classes.splice(contains, 1);
 			classes.push('tabIndent');
