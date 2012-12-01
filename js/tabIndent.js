@@ -76,7 +76,7 @@ tabIndent = {
 							var lowerBound = startIndices[l];
 							if (startIndices[l+1] && currentStart != startIndices[l+1]) lowerBound = startIndices[l+1];
 
-							if (lowerBound >= currentStart && startIndices[l] <= currentEnd) {
+							if (lowerBound >= currentStart && startIndices[l] < currentEnd) {
 								this.value = this.value.slice(0, startIndices[l]) + "\t" + this.value.slice(startIndices[l]);
 
 								newStart = startIndices[l];
@@ -109,7 +109,7 @@ tabIndent = {
 							var lowerBound = startIndices[l];
 							if (startIndices[l+1] && currentStart != startIndices[l+1]) lowerBound = startIndices[l+1];
 
-							if (lowerBound >= currentStart && startIndices[l] <= currentEnd) {
+							if (lowerBound >= currentStart && startIndices[l] < currentEnd) {
 								if (this.value.substr(startIndices[l], 1) == '\t') {
 									// Remove a tab
 									this.value = this.value.slice(0, startIndices[l]) + this.value.slice(startIndices[l] + 1);
