@@ -53,7 +53,6 @@ tabIndent = {
 	version: '0.1.5',
 	events: {
 		keydown: function(e) {
-			console.log(e.keyCode, e);
 			if (e.keyCode === 9) {
 				e.preventDefault();
 				var	currentStart = this.selectionStart,
