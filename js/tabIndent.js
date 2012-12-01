@@ -91,10 +91,15 @@ tabIndent = {
 				} else {
 					// Shift-Tab Behaviour
 					if (!tabIndent.isMultiLine(this)) {
-						// If there's a tab before the selectionStart, remove it
 						if (this.value.substr(currentStart - 1, 1) == "\t") {
+							// If there's a tab before the selectionStart, remove it
 							this.value = this.value.substr(0, currentStart - 1) + this.value.substr(currentStart);
 							this.selectionStart = currentStart - 1;
+							this.selectionEnd = currentEnd - 1;
+						} else if (this.value.substr(currentStart - 1, 1) == "\n" && this.value.substr(currentStart, 1) == '\t') {
+							// However, if the selection is at the start of the line, and the first character is a tab, remove it
+							this.value = this.value.substring(0, currentStart) + this.value.substr(currentStart + 1);
+							this.selectionStart = currentStart;
 							this.selectionEnd = currentEnd - 1;
 						}
 					} else {
