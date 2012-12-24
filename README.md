@@ -51,6 +51,12 @@ Likewise, to remove an instance of tabIndent:
 For styling purposes, after a textarea is enhanced by tabIndent, it will have
 the class `tabIndent-rendered`.
 
+The default tab sequence is '\t', but it can be set to any string you want. For
+example, to use four spaces instead of the tab character, just add the following
+line before rendering:
+
+    tabIndent.config.tab = '    ';
+
 ## Caveat
 
 **tabIndent.js** willingly breaks the default action of the `tab` button, whose
