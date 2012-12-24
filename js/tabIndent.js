@@ -28,7 +28,7 @@ if (!Element.prototype.addEventListener) {
 				}
 				for (var iLstId = 0; iLstId < aElListeners.length; iLstId++) {
 					if (aElListeners[iLstId] === fListener) { return; }
-				}     
+				}
 				aElListeners.push(fListener);
 			}
 		} else {
@@ -52,10 +52,13 @@ if (!Element.prototype.addEventListener) {
 tabIndent = {
 	version: '0.1.6',
 	config: {
+		tab: '\t',
 		images: '../images/'
 	},
 	events: {
 		keydown: function(e) {
+			var tab = tabIndent.config.tab;
+			var tabWidth = tab.length;
 			if (e.keyCode === 9) {
 				e.preventDefault();
 				var	currentStart = this.selectionStart,
@@ -64,9 +67,9 @@ tabIndent = {
 					// Normal Tab Behaviour
 					if (!tabIndent.isMultiLine(this)) {
 						// Add tab before selection, maintain highlighted text selection
-						this.value = this.value.slice(0, currentStart) + "\t" + this.value.slice(currentStart);
-						this.selectionStart = currentStart + 1;
-						this.selectionEnd = currentEnd + 1;
+						this.value = this.value.slice(0, currentStart) + tab + this.value.slice(currentStart);
+						this.selectionStart = currentStart + tabWidth;
+						this.selectionEnd = currentEnd + tabWidth;
 					} else {
 						// Iterating through the startIndices, if the index falls within selectionStart and selectionEnd, indent it there.
 						var	startIndices = tabIndent.findStartIndices(this),
@@ -80,7 +83,7 @@ tabIndent = {
 							if (startIndices[l+1] && currentStart != startIndices[l+1]) lowerBound = startIndices[l+1];
 
 							if (lowerBound >= currentStart && startIndices[l] < currentEnd) {
-								this.value = this.value.slice(0, startIndices[l]) + "\t" + this.value.slice(startIndices[l]);
+								this.value = this.value.slice(0, startIndices[l]) + tab + this.value.slice(startIndices[l]);
 
 								newStart = startIndices[l];
 								if (!newEnd) newEnd = (startIndices[l+1] ? startIndices[l+1] - 1 : 'end');
@@ -89,21 +92,21 @@ tabIndent = {
 						}
 
 						this.selectionStart = newStart;
-						this.selectionEnd = (newEnd !== 'end' ? newEnd + affectedRows : this.value.length);
+						this.selectionEnd = (newEnd !== 'end' ? newEnd + (tabWidth * affectedRows) : this.value.length);
 					}
 				} else {
 					// Shift-Tab Behaviour
 					if (!tabIndent.isMultiLine(this)) {
-						if (this.value.substr(currentStart - 1, 1) == "\t") {
+						if (this.value.substr(currentStart - tabWidth, tabWidth) == tab) {
 							// If there's a tab before the selectionStart, remove it
-							this.value = this.value.substr(0, currentStart - 1) + this.value.substr(currentStart);
-							this.selectionStart = currentStart - 1;
-							this.selectionEnd = currentEnd - 1;
-						} else if (this.value.substr(currentStart - 1, 1) == "\n" && this.value.substr(currentStart, 1) == '\t') {
+							this.value = this.value.substr(0, currentStart - tabWidth) + this.value.substr(currentStart);
+							this.selectionStart = currentStart - tabWidth;
+							this.selectionEnd = currentEnd - tabWidth;
+						} else if (this.value.substr(currentStart - 1, 1) == "\n" && this.value.substr(currentStart, tabWidth) == tab) {
 							// However, if the selection is at the start of the line, and the first character is a tab, remove it
-							this.value = this.value.substring(0, currentStart) + this.value.substr(currentStart + 1);
+							this.value = this.value.substring(0, currentStart) + this.value.substr(currentStart + tabWidth);
 							this.selectionStart = currentStart;
-							this.selectionEnd = currentEnd - 1;
+							this.selectionEnd = currentEnd - tabWidth;
 						}
 					} else {
 						// Iterating through the startIndices, if the index falls within selectionStart and selectionEnd, remove an indent from that row
@@ -118,9 +121,9 @@ tabIndent = {
 							if (startIndices[l+1] && currentStart != startIndices[l+1]) lowerBound = startIndices[l+1];
 
 							if (lowerBound >= currentStart && startIndices[l] < currentEnd) {
-								if (this.value.substr(startIndices[l], 1) == '\t') {
+								if (this.value.substr(startIndices[l], tabWidth) == tab) {
 									// Remove a tab
-									this.value = this.value.slice(0, startIndices[l]) + this.value.slice(startIndices[l] + 1);
+									this.value = this.value.slice(0, startIndices[l]) + this.value.slice(startIndices[l] + tabWidth);
 									affectedRows++;
 								} else {}	// Do nothing
 
@@ -130,7 +133,7 @@ tabIndent = {
 						}
 
 						this.selectionStart = newStart;
-						this.selectionEnd = (newEnd !== 'end' ? newEnd - affectedRows : this.value.length);
+						this.selectionEnd = (newEnd !== 'end' ? newEnd - (affectedRows * tabWidth) : this.value.length);
 					}
 				}
 			} else if (e.keyCode == 27) {
