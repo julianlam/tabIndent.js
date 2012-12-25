@@ -4,7 +4,7 @@ Object.defineProperty(tabEvent, 'keyCode', {
     get : function() {
         return this.keyCodeVal;
     }
-});     
+});
 Object.defineProperty(tabEvent, 'which', {
     get : function() {
         return this.keyCodeVal;
@@ -20,7 +20,7 @@ Object.defineProperty(shiftTabEvent, 'keyCode', {
     get : function() {
         return this.keyCodeVal;
     }
-});     
+});
 Object.defineProperty(shiftTabEvent, 'which', {
     get : function() {
         return this.keyCodeVal;
@@ -32,6 +32,7 @@ shiftTabEvent.keyCodeVal = 9;
 
 describe("tabIndent", function() {
 	beforeEach(function() {
+    tabIndent.config.tab = '\t';
 		document.getElementById('env').innerHTML =
 			'<textarea class="tabIndent"></textarea><textarea id="foobar"></textarea><div id="lorem"></div>';
 	});
@@ -135,6 +136,20 @@ describe("tabIndent", function() {
 			expect(el.value).toEqual("\tab\n\tcd");
 			expect(el.selectionStart).toEqual(0);
 			expect(el.selectionEnd).toEqual(7);
+		});
+
+    it('should indent multi-line selection using non-default tab sequence', function() {
+			tabIndent.config.tab = 'abcd';
+			var tabWidth = 4;
+			var el = document.getElementById('foobar');
+			tabIndent.render(el);
+			el.value = "ab\ncd";
+			el.selectionStart = 0;
+			el.selectionEnd = 5;
+			el.dispatchEvent(tabEvent);
+			expect(el.value).toEqual("\tab\n\tcd");
+			expect(el.selectionStart).toEqual(0);
+			expect(el.selectionEnd).toEqual(5 + 2*tabWidth);
 		});
 	});
 
