@@ -90,7 +90,6 @@ tabIndent = {
 			}
 		},
 		disable: function(e) {
-			console.log('disabling');
 			var events = this;
 
 			// Temporarily suspend the main tabIndent event
@@ -102,7 +101,6 @@ tabIndent = {
 
 		if (el.nodeName === 'TEXTAREA') {
 			el.addEventListener('focus', function f() {
-				console.log('focusing');
 				var delayedRefocus = setTimeout(function() {
 					var classes = (el.getAttribute('class') || '').split(' '),
 					contains = classes.indexOf('tabIndent');
