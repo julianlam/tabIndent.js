@@ -88,7 +88,43 @@ tabIndent = {
 			} else if (e.keyCode === 27) {	// Esc
 				tabIndent.events.disable(e);
 			} else if (e.keyCode === 13 && e.shiftKey === false) {	// Enter
-				// console.log(this.selectionStart, this.selectionEnd);
+				var	self = tabIndent,
+					cursorPos = this.selectionStart,
+					startIndices = self.findStartIndices(this),
+					numStartIndices = startIndices.length,
+					startIndex = 0,
+					endIndex = 0,
+					tabMatch = new RegExp(tab.replace('\t', '\\t').replace(/ /g, '\\s'), 'g'),
+					lineText = '',
+					indentText = '';
+					tabs = null,
+					numTabs = 0;
+
+				for(var x=0;x<numStartIndices;x++) {
+					if (startIndices[x+1] && (cursorPos >= startIndices[x]) && (cursorPos < startIndices[x+1])) {
+						startIndex = startIndices[x];
+						endIndex = startIndices[x+1] - 1;
+						break;
+					} else {
+						startIndex = startIndices[numStartIndices-1];
+						endIndex = this.value.length;
+					}
+				}
+
+				// Find the number of tab characters following this line start index
+				lineText = this.value.slice(startIndex, endIndex);
+				tabs = lineText.match(tabMatch);
+				if (tabs !== null) {
+					e.preventDefault();
+					numTabs = tabs.length;
+					for(x=0;x<numTabs;x++) {
+						indentText += tab;
+					}
+
+					this.value = this.value.slice(0, endIndex) + "\n" + indentText + this.value.slice(endIndex);
+					this.selectionStart = endIndex + (tabWidth * numTabs) + 1;
+					this.selectionEnd = endIndex + (tabWidth * numTabs) + 1;
+				}
 			}
 		},
 		disable: function(e) {
@@ -98,7 +134,6 @@ tabIndent = {
 			tabIndent.remove(e.target);
 		},
 		focus: function() {
-			console.log('focusing');
 			var	self = tabIndent,
 				el = this,
 				delayedRefocus = setTimeout(function() {
