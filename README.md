@@ -1,6 +1,10 @@
 tabIndent.js
 ================
 
+## Demo
+
+Play with the [latest stable demo](http://julianlam.github.com/tabIndent.js/)
+
 ## Introduction
 
 **tabIndent.js** does two things to enhance the traditional text-box:
