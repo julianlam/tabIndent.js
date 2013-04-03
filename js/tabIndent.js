@@ -1,56 +1,5 @@
-// Enable add/removeEventListener if it is not present (retrieved from https://developer.mozilla.org/en-US/docs/DOM/element.removeEventListener)
-if (!Element.prototype.addEventListener) {
-	var oListeners = {};
-	function runListeners(oEvent) {
-		if (!oEvent) { oEvent = window.event; }
-		for (var iLstId = 0, iElId = 0, oEvtListeners = oListeners[oEvent.type]; iElId < oEvtListeners.aEls.length; iElId++) {
-			if (oEvtListeners.aEls[iElId] === this) {
-				for (iLstId; iLstId < oEvtListeners.aEvts[iElId].length; iLstId++) { oEvtListeners.aEvts[iElId][iLstId].call(this, oEvent); }
-					break;
-			}
-		}
-	}
-	Element.prototype.addEventListener = function (sEventType, fListener /*, useCapture (will be ignored!) */) {
-		if (oListeners.hasOwnProperty(sEventType)) {
-			var oEvtListeners = oListeners[sEventType];
-			for (var nElIdx = -1, iElId = 0; iElId < oEvtListeners.aEls.length; iElId++) {
-				if (oEvtListeners.aEls[iElId] === this) { nElIdx = iElId; break; }
-			}
-			if (nElIdx === -1) {
-				oEvtListeners.aEls.push(this);
-				oEvtListeners.aEvts.push([fListener]);
-				this["on" + sEventType] = runListeners;
-			} else {
-				var aElListeners = oEvtListeners.aEvts[nElIdx];
-				if (this["on" + sEventType] !== runListeners) {
-					aElListeners.splice(0);
-					this["on" + sEventType] = runListeners;
-				}
-				for (var iLstId = 0; iLstId < aElListeners.length; iLstId++) {
-					if (aElListeners[iLstId] === fListener) { return; }
-				}
-				aElListeners.push(fListener);
-			}
-		} else {
-			oListeners[sEventType] = { aEls: [this], aEvts: [ [fListener] ] };
-			this["on" + sEventType] = runListeners;
-		}
-	};
-	Element.prototype.removeEventListener = function (sEventType, fListener /*, useCapture (will be ignored!) */) {
-		if (!oListeners.hasOwnProperty(sEventType)) { return; }
-		var oEvtListeners = oListeners[sEventType];
-		for (var nElIdx = -1, iElId = 0; iElId < oEvtListeners.aEls.length; iElId++) {
-			if (oEvtListeners.aEls[iElId] === this) { nElIdx = iElId; break; }
-		}
-		if (nElIdx === -1) { return; }
-		for (var iLstId = 0, aElListeners = oEvtListeners.aEvts[nElIdx]; iLstId < aElListeners.length; iLstId++) {
-			if (aElListeners[iLstId] === fListener) { aElListeners.splice(iLstId, 1); }
-		}
-	};
-}
-
 tabIndent = {
-	version: '0.1.6',
+	version: '0.1.7',
 	config: {
 		tab: '\t',
 		images: '../images/'
@@ -141,13 +90,11 @@ tabIndent = {
 			}
 		},
 		disable: function(e) {
+			console.log('disabling');
 			var events = this;
 
 			// Temporarily suspend the main tabIndent event
 			tabIndent.remove(e.target);
-
-			// ... but re-add it upon re-focus
-			tabIndent.render(e.target);
 		}
 	},
 	render: function(el) {
@@ -155,6 +102,7 @@ tabIndent = {
 
 		if (el.nodeName === 'TEXTAREA') {
 			el.addEventListener('focus', function f() {
+				console.log('focusing');
 				var delayedRefocus = setTimeout(function() {
 					var classes = (el.getAttribute('class') || '').split(' '),
 					contains = classes.indexOf('tabIndent');
