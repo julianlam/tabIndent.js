@@ -85,8 +85,10 @@ tabIndent = {
 						this.selectionEnd = (newEnd !== 'end' ? newEnd - (affectedRows * tabWidth) : this.value.length);
 					}
 				}
-			} else if (e.keyCode == 27) {
+			} else if (e.keyCode === 27) {	// Esc
 				tabIndent.events.disable(e);
+			} else if (e.keyCode === 13 && e.shiftKey === false) {	// Enter
+				// console.log(this.selectionStart, this.selectionEnd);
 			}
 		},
 		disable: function(e) {
@@ -94,14 +96,12 @@ tabIndent = {
 
 			// Temporarily suspend the main tabIndent event
 			tabIndent.remove(e.target);
-		}
-	},
-	render: function(el) {
-		var self = this;
-
-		if (el.nodeName === 'TEXTAREA') {
-			el.addEventListener('focus', function f() {
-				var delayedRefocus = setTimeout(function() {
+		},
+		focus: function() {
+			console.log('focusing');
+			var	self = tabIndent,
+				el = this,
+				delayedRefocus = setTimeout(function() {
 					var classes = (el.getAttribute('class') || '').split(' '),
 					contains = classes.indexOf('tabIndent');
 
@@ -114,15 +114,21 @@ tabIndent = {
 					classes.push('tabIndent-rendered');
 					el.setAttribute('class', classes.join(' '));
 
-					el.removeEventListener('focus', f);
+					el.removeEventListener('focus', self.events.keydown);
 				}, 500);
 
-				// If they were just tabbing through the input, let them continue unimpeded
-				el.addEventListener('blur', function b() {
-					clearTimeout(delayedRefocus);
-					el.removeEventListener('blur', b);
-				});
+			// If they were just tabbing through the input, let them continue unimpeded
+			el.addEventListener('blur', function b() {
+				clearTimeout(delayedRefocus);
+				el.removeEventListener('blur', b);
 			});
+		}
+	},
+	render: function(el) {
+		var self = this;
+
+		if (el.nodeName === 'TEXTAREA') {
+			el.addEventListener('focus', self.events.focus);
 
 			el.addEventListener('blur', function b(e) {
 				self.events.disable(e);
@@ -155,12 +161,14 @@ tabIndent = {
 			var classes = (el.getAttribute('class') || '').split(' '),
 				contains = classes.indexOf('tabIndent-rendered');
 
-			el.removeEventListener('keydown', this.events.keydown);
-			el.style.backgroundImage = '';
+			if (contains !== -1) {
+				el.removeEventListener('keydown', this.events.keydown);
+				el.style.backgroundImage = '';
 
-			if (contains !== -1) classes.splice(contains, 1);
-			classes.push('tabIndent');
-			el.setAttribute('class', (classes.length > 1 ? classes.join(' ') : classes[0]));
+				classes.splice(contains, 1);
+				classes.push('tabIndent');
+				el.setAttribute('class', (classes.length > 1 ? classes.join(' ') : classes[0]));
+			}
 		}
 	},
 	removeAll: function() {
