@@ -17,13 +17,7 @@ intentation)
 ## Installation
 
 The repository contains four folders. Of those, only the `/js` folder is
-required. The `/images` folder contains one icon which is displayed at the
-top-right of every textarea that it is modifying.
-
-If the icon is not being displayed, please ensure that the `images` property
-in the `config` object correctly points to the folder containing the image. Its
-default setting assumes that the `/images` folder is one directory above the
-folder containing the script.
+required.
 
 ## Usage
 
