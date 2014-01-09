@@ -93,11 +93,9 @@ tabIndent = {
 					numStartIndices = startIndices.length,
 					startIndex = 0,
 					endIndex = 0,
-					tabMatch = new RegExp(tab.replace('\t', '\\t').replace(/ /g, '\\s'), 'g'),
-					lineText = '',
-					indentText = '';
-					tabs = null,
-					numTabs = 0;
+					tabMatch = new RegExp("^" + tab.replace('\t', '\\t').replace(/ /g, '\\s') + "+", 'g'),
+					lineText = '';
+					tabs = null;
 
 				for(var x=0;x<numStartIndices;x++) {
 					if (startIndices[x+1] && (cursorPos >= startIndices[x]) && (cursorPos < startIndices[x+1])) {
@@ -110,19 +108,21 @@ tabIndent = {
 					}
 				}
 
-				// Find the number of tab characters following this line start index
 				lineText = this.value.slice(startIndex, endIndex);
 				tabs = lineText.match(tabMatch);
 				if (tabs !== null) {
 					e.preventDefault();
-					numTabs = tabs.length;
-					for(x=0;x<numTabs;x++) {
-						indentText += tab;
+					var indentText = tabs[0];
+					var indentWidth = indentText.length;
+					var inLinePos = cursorPos - startIndex;
+					if (indentWidth > inLinePos) {
+						indentWidth = inLinePos;
+						indentText = indentText.slice(0, inLinePos);
 					}
-
-					this.value = this.value.slice(0, endIndex) + "\n" + indentText + this.value.slice(endIndex);
-					this.selectionStart = endIndex + (tabWidth * numTabs) + 1;
-					this.selectionEnd = endIndex + (tabWidth * numTabs) + 1;
+					
+					this.value = this.value.slice(0, cursorPos) + "\n" + indentText + this.value.slice(cursorPos);
+					this.selectionStart = cursorPos + indentWidth + 1;
+					this.selectionEnd = this.selectionStart;
 				}
 			}
 		},
